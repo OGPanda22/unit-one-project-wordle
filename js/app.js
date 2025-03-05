@@ -10,46 +10,59 @@
 
 //create variable for random word choice from wordList array that players have to guess
     const word = wordList[Math.floor(Math.random()*wordList.length)].toUpperCase();
-        console.log(word);
-
+    console.log(word);
 //create buttons for keys
-let button = document.querySelectorAll('.key');
-for (i = 0; i < button.length; i++){
-    button[i].addEventListener('click', function(event){
+    let button = document.querySelectorAll('.key');
+    for (i = 0; i < button.length; i++){
+        button[i].addEventListener('click', function(event){
 //if length of guess is less than 5, add letter to it
-if(guess.length < 5){
-guess = guess + event.target.dataset.key
+    if(guess.length < 5 && attempt <= 5 && gameOver == false){
+    guess = guess + event.target.dataset.key;
+    renderGuess();
 }
 //render the guess
-renderGuess();
-console.log(event.target.dataset.key);
+    
 })
 }
-function renderGuess() {
+    function renderGuess() {
+    const childNum = attempt + 1;
+    let rowEl = document.querySelectorAll("#gameBoard .gameRow:nth-child("+ childNum +") .gameBlock");
+    console.log(rowEl);
+    console.log(attempt);
+    for(i = 0; i < guess.length; i++){
+        rowEl[i].innerText = guess[i]
+    }
 }
 
 //add button for enter
-let enter = document.querySelector('#enter');
-enter.addEventListener('click', function(event){
-let guessResult = [-1, -1, -1, -1, -1];
+    let enter = document.querySelector('#enter');
+    enter.addEventListener('click', function(event){
+    let guessResult = [-1, -1, -1, -1, -1];
 //compare guess to word
-console.log("we are triggering the enter button");
-console.log(guess);
-console.log(word);
-if(guess.toUpperCase() === word){
-//if guess is correct, you win
-console.log(gameOver);
-gameOver = true;
-console.log(gameOver);
+    let guessArray = guess.toUpperCase().split("");
+    let wordArray = word.split("");
+    let firstBlocks;
+console.log(attempt);
+if(attempt == 0){
+    firstBlocks = document.querySelectorAll('.gameBlock_First');
+} else if(attempt == 1){
+    firstBlocks = document.querySelectorAll('.gameBlock_Second');
+} else if(attempt == 2){
+    firstBlocks = document.querySelectorAll('.gameBlock_Third');
+} else if(attempt == 3){
+    firstBlocks = document.querySelectorAll('.gameBlock_Fourth');
+} else if(attempt == 4){
+    firstBlocks = document.querySelectorAll('.gameBlock_Fifth');
 } else {
+    firstBlocks = document.querySelectorAll('.gameBlock_Last');
+}
+    if(guess.toUpperCase() === word){ 
+//if guess is correct, you win
+    gameOver = true;
+}   else {
 //if guess is incorrect
 //loop through each letter in guess
-for(i = 0; i < guess.length; i++){
-    //split word into array of letters
-    const guessArray = guess.toUpperCase().split("");
-    console.log(guessArray);
-    const wordArray = word.split("");
-    console.log(wordArray);
+    for(i = 0; i < guess.length; i++){
     //if letter is in word and in correct spot, make green
         if(guessArray[i] === wordArray[i]){
             guessResult[i] = -1;
@@ -61,55 +74,35 @@ for(i = 0; i < guess.length; i++){
             guessResult[i] = 1;
         }
 }
+    if(attempt >= 5){
+        gameOver = true;
+    }
 }
 
-//get the game blocks in last game row in the game board
-let lastBlocks = document.querySelectorAll('.gameBlock_First');
-console.log(guessResult);
+//get the game blocks in first game row in the game board
+//create a loop to advance to next row after enter button pressed
 //for each of each game block in last game row
-lastBlocks.forEach((element, index) => {
+firstBlocks.forEach((element, index) => {
 //if guess result = 0, add inWord
-console.log(element)
     if(guessResult[index] == 0) {
         element.classList.add("gameBlock_inWord");
-        console.log(element);
     }
 //else if result = 1, add correct
     else if(guessResult[index] == -1) {
         element.classList.add("gameBlock_correct");
-        console.log(element);
     }
 //else add notInWord
     else {
         element.classList.add("gameBlock_notInWord");
-        console.log(element.classList);
     }
-});
-
-//if attempt is greater than or equal to guesses
-//game over
-function checkameOver() {
-if(attempt >= guesses) {
-gameOver = true;
-} else {
-console.log(`Attempt ${attempt + 1} of ${guesses}`);
 }
-}
-//add new empty row
-//create new div element gameRowDiv
-//add class gamerow to div element
-const gameRow = document.createElement('div');
-gameRow.classList.add('gameRow');
-//loop 5 times
-for (i = 0; i < 5; i++) {
-//create new div element
-//add class gameblock to div element 
-    const gameBlock = document.createElement('div');
-    gameBlock.classList.add('gameBlock');
-//append new div to gamerow
-    gameRow.appendChild(gameBlock);
-}
-//append gamerow to gameboard
-    // gameBoard.appendChild(gameRow);
+)
+guessArray.length = 0;
+        guess = "";
+            attempt++
+        if(gameOver){
+            document.querySelector("#message").innerText = "Game Over!";
+        }
+        console.log(attempt);
 }
 );
