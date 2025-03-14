@@ -97,7 +97,7 @@ guessArray.length = 0;
         guess = "";
             attempt++
         if(gameOver){
-            document.querySelector("#message").innerText = "Game Over!";
+            document.querySelector("#message").innerText = `Game Over! The word was ${word}`;
         }
 }
 );
